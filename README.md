@@ -136,26 +136,27 @@ python app.py
 flask==2.3.3
 ```
 
-### Step 3 — Deploy
-
-```bash
-npm i -g vercel
+Deployment (Vercel)
+Step 1 — Add vercel.json
+json{
+  "builds": [
+    { "src": "app.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "app.py" }
+  ]
+}
+Step 2 — Add requirements.txt
+flask==2.3.3
+Step 3 — Deploy
+bashnpm i -g vercel
 vercel login
 vercel --prod
 
-## API Reference
-
-| Endpoint | Method | Body | Description |
-|---|---|---|---|
-| `/` | GET | — | Serve the HTML frontend |
-| `/api/new_game` | POST | `{rows, cols, pits}` | Initialize new episode |
-| `/api/step` | POST | — | Advance agent one step |
-| `/api/state` | GET | — | Get current game state |
-
-### Example Response (`/api/step`)
-
-```json
-{
+ API Reference
+EndpointMethodBodyDescription/GET—Serve the HTML frontend/api/new_gamePOST{rows, cols, pits}Initialize new episode/api/stepPOST—Advance agent one step/api/stateGET—Get current game state
+Example Response (/api/step)
+json{
   "agent": [1, 0],
   "visited": [[0,0], [1,0]],
   "safe_confirmed": [[0,0], [1,0]],
@@ -168,7 +169,6 @@ vercel --prod
   "log": ["Agent at (1,0) | Percepts: ['Breeze']"],
   "grid": [...]
 }
-
 
 ##  Known Limitations
 
