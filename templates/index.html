@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wumpus World – Logic Agent</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span class="logo-w">W</span>UMPUS <span class="logo-sub">Logic Agent</span>
+    </div>
+    <p class="tagline">Propositional Logic · Resolution Refutation · KB Inference</p>
+  </header>
+
+  <!-- CONTROL PANEL -->
+  <section class="controls">
+    <div class="ctrl-group">
+      <label>Rows <input id="inp-rows" type="number" value="4" min="3" max="8"/></label>
+      <label>Cols <input id="inp-cols" type="number" value="4" min="3" max="8"/></label>
+      <label>Pits <input id="inp-pits" type="number" value="3" min="1" max="10"/></label>
+    </div>
+    <div class="ctrl-btns">
+      <button id="btn-new" class="btn btn-primary">⚡ New Game</button>
+      <button id="btn-step" class="btn btn-secondary" disabled>▶ Step</button>
+      <button id="btn-auto" class="btn btn-accent" disabled>⏩ Auto</button>
+    </div>
+  </section>
+
+  <!-- MAIN LAYOUT -->
+  <main>
+    <!-- GRID -->
+    <div class="grid-wrap">
+      <div id="grid-container"></div>
+      <div id="status-banner" class="status-banner hidden"></div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <aside class="side-panel">
+
+      <!-- METRICS -->
+      <div class="panel-box metrics-box">
+        <h3>📊 Real-Time Metrics</h3>
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-val" id="m-steps">0</span>
+            <span class="metric-lbl">Inference Steps</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val" id="m-moves">0</span>
+            <span class="metric-lbl">Agent Moves</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val" id="m-visited">0</span>
+            <span class="metric-lbl">Cells Visited</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val" id="m-safe">0</span>
+            <span class="metric-lbl">Safe Confirmed</span>
+          </div>
+        </div>
+        <div class="percept-row">
+          <span class="percept-lbl">Active Percepts:</span>
+          <span id="percept-badges">—</span>
+        </div>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="panel-box legend-box">
+        <h3>🗺 Legend</h3>
+        <div class="legend-items">
+          <div class="leg"><span class="swatch ag"></span>Agent</div>
+          <div class="leg"><span class="swatch sf"></span>Safe / Visited</div>
+          <div class="leg"><span class="swatch unk"></span>Unknown</div>
+          <div class="leg"><span class="swatch pit"></span>Pit (confirmed)</div>
+          <div class="leg"><span class="swatch wump"></span>Wumpus (confirmed)</div>
+          <div class="leg"><span class="swatch gold"></span>Gold</div>
+        </div>
+      </div>
+
+      <!-- KB LOG -->
+      <div class="panel-box log-box">
+        <h3>🧠 KB – Recent Facts</h3>
+        <ul id="kb-facts"></ul>
+      </div>
+
+      <!-- AGENT LOG -->
+      <div class="panel-box log-box">
+        <h3>🤖 Agent Log</h3>
+        <ul id="agent-log"></ul>
+      </div>
+
+    </aside>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
