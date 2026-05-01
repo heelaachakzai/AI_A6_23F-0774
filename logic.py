@@ -1,9 +1,9 @@
 import random
 from itertools import combinations
 
-# ─────────────────────────────────────────────────────────────
+
 #  Propositional Logic helpers
-# ─────────────────────────────────────────────────────────────
+
 
 class Literal:
     """A signed propositional variable, e.g. P_1_1 or ¬P_1_1."""
@@ -84,9 +84,8 @@ def _fmt(clause):
     return "{" + ", ".join(str(l) for l in clause) + "}"
 
 
-# ─────────────────────────────────────────────────────────────
 #  Knowledge Base
-# ─────────────────────────────────────────────────────────────
+
 
 class KnowledgeBase:
     def __init__(self):
@@ -94,7 +93,7 @@ class KnowledgeBase:
         self.facts: list[str] = []           # human-readable log
         self.total_steps = 0
 
-    # ── TELL ──────────────────────────────────────────────────
+    
     def tell_no_pit(self, r, c):
         lit = Literal(f"P_{r}_{c}", negated=True)
         cl  = frozenset([lit])
@@ -172,7 +171,6 @@ class KnowledgeBase:
                 self.clauses.append(cl)
                 self.facts.append(f"TELL: ¬W_{nr}_{nc}  (no stench → no wumpus)")
 
-    # ── ASK ───────────────────────────────────────────────────
     def ask_safe(self, r, c):
         """
         Ask: is cell (r,c) safe?
@@ -190,9 +188,7 @@ class KnowledgeBase:
         return safe_pit and safe_wumpus, steps, trace
 
 
-# ─────────────────────────────────────────────────────────────
-#  Wumpus World environment + agent
-# ─────────────────────────────────────────────────────────────
+
 
 class WumpusWorld:
     def __init__(self, rows: int, cols: int, num_pits: int):
@@ -226,7 +222,6 @@ class WumpusWorld:
         # Process starting cell
         self._process_cell(0, 0)
 
-    # ── helpers ───────────────────────────────────────────────
     def _neighbors(self, r, c):
         out = []
         for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
@@ -270,7 +265,7 @@ class WumpusWorld:
         )
         return safe
 
-    # ── public: one agent step ────────────────────────────────
+    
     def agent_step(self):
         if self.dead or self.won:
             return self.get_state()
@@ -288,7 +283,6 @@ class WumpusWorld:
 
         moved = False
         if safe_moves:
-            # Prefer towards gold, else pick first safe
             target = safe_moves[0]
             for m in safe_moves:
                 if m == self.gold_pos:
@@ -300,7 +294,6 @@ class WumpusWorld:
             self._process_cell(*target)
             moved = True
         elif unsafe_moves:
-            # No proven-safe unvisited neighbour: fall back to visited
             visited_nbrs = [n for n in nbrs if n in self.visited]
             if visited_nbrs:
                 self.agent = visited_nbrs[0]
@@ -339,7 +332,7 @@ class WumpusWorld:
 
         return self.get_state()
 
-    # ── serialise for API ─────────────────────────────────────
+    # ── serialise for API 
     def get_state(self):
         r, c = self.agent
         nbrs = self._neighbors(r, c)
@@ -365,7 +358,6 @@ class WumpusWorld:
                     "wumpus":    (row, col) == self.wumpus,
                     "gold":      (row, col) == self.gold_pos,
                 }
-                # Reveal hazards only if visited or game over
                 reveal = self.dead or self.won
                 cell["show_pit"]    = cell["pit"]    and (cell["visited"] or reveal)
                 cell["show_wumpus"] = cell["wumpus"] and (cell["visited"] or reveal)
