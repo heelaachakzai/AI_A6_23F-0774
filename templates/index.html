@@ -1,101 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wumpus World – Logic Agent</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+  <title>Wumpus World — AI Logic Agent</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="logo">
-      <span class="logo-w">W</span>UMPUS <span class="logo-sub">Logic Agent</span>
-    </div>
-    <p class="tagline">Propositional Logic · Resolution Refutation · KB Inference</p>
-  </header>
 
-  <!-- CONTROL PANEL -->
-  <section class="controls">
-    <div class="ctrl-group">
-      <label>Rows <input id="inp-rows" type="number" value="4" min="3" max="8"/></label>
-      <label>Cols <input id="inp-cols" type="number" value="4" min="3" max="8"/></label>
-      <label>Pits <input id="inp-pits" type="number" value="3" min="1" max="10"/></label>
-    </div>
-    <div class="ctrl-btns">
-      <button id="btn-new" class="btn btn-primary">⚡ New Game</button>
-      <button id="btn-step" class="btn btn-secondary" disabled>▶ Step</button>
-      <button id="btn-auto" class="btn btn-accent" disabled>⏩ Auto</button>
-    </div>
-  </section>
+  <div class="bg-grid"></div>
 
-  <!-- MAIN LAYOUT -->
-  <main>
-    <!-- GRID -->
-    <div class="grid-wrap">
-      <div id="grid-container"></div>
-      <div id="status-banner" class="status-banner hidden"></div>
-    </div>
-
-    <!-- SIDE PANEL -->
-    <aside class="side-panel">
-
-      <!-- METRICS -->
-      <div class="panel-box metrics-box">
-        <h3>📊 Real-Time Metrics</h3>
-        <div class="metrics-grid">
-          <div class="metric">
-            <span class="metric-val" id="m-steps">0</span>
-            <span class="metric-lbl">Inference Steps</span>
-          </div>
-          <div class="metric">
-            <span class="metric-val" id="m-moves">0</span>
-            <span class="metric-lbl">Agent Moves</span>
-          </div>
-          <div class="metric">
-            <span class="metric-val" id="m-visited">0</span>
-            <span class="metric-lbl">Cells Visited</span>
-          </div>
-          <div class="metric">
-            <span class="metric-val" id="m-safe">0</span>
-            <span class="metric-lbl">Safe Confirmed</span>
-          </div>
+  <div id="intro" class="screen">
+    <div class="intro-wrap">
+      <div class="intro-logo">
+        <div class="logo-mark">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="16" fill="#0f172a"/>
+            <text x="32" y="45" text-anchor="middle" font-size="36" fill="#f59e0b">☠</text>
+          </svg>
         </div>
-        <div class="percept-row">
-          <span class="percept-lbl">Active Percepts:</span>
-          <span id="percept-badges">—</span>
+        <div>
+          <h1 class="logo-title">WUMPUS</h1>
+          <p class="logo-sub">Propositional Logic Agent</p>
         </div>
       </div>
 
-      <!-- LEGEND -->
-      <div class="panel-box legend-box">
-        <h3>🗺 Legend</h3>
-        <div class="legend-items">
-          <div class="leg"><span class="swatch ag"></span>Agent</div>
-          <div class="leg"><span class="swatch sf"></span>Safe / Visited</div>
-          <div class="leg"><span class="swatch unk"></span>Unknown</div>
-          <div class="leg"><span class="swatch pit"></span>Pit (confirmed)</div>
-          <div class="leg"><span class="swatch wump"></span>Wumpus (confirmed)</div>
-          <div class="leg"><span class="swatch gold"></span>Gold</div>
+      <div class="intro-tagline">
+        A knowledge-based AI that navigates danger using<br/>
+        <strong>CNF encoding</strong> and <strong>resolution refutation</strong>
+      </div>
+
+      <div class="intro-card">
+        <h2 class="config-title">Configure World</h2>
+        <div class="config-grid">
+          <div class="config-item">
+            <label>Rows</label>
+            <div class="stepper">
+              <button onclick="adj('rows',-1)">−</button>
+              <span id="v-rows">4</span>
+              <button onclick="adj('rows',1)">+</button>
+            </div>
+          </div>
+          <div class="config-item">
+            <label>Columns</label>
+            <div class="stepper">
+              <button onclick="adj('cols',-1)">−</button>
+              <span id="v-cols">4</span>
+              <button onclick="adj('cols',1)">+</button>
+            </div>
+          </div>
+          <div class="config-item">
+            <label>Pit Count</label>
+            <div class="stepper">
+              <button onclick="adj('pits',-1)">−</button>
+              <span id="v-pits">3</span>
+              <button onclick="adj('pits',1)">+</button>
+            </div>
+          </div>
         </div>
+        <button class="btn-start" onclick="startGame()">
+          <span class="btn-start-icon">▶</span>
+          Initialize Agent
+        </button>
       </div>
 
-      <!-- KB LOG -->
-      <div class="panel-box log-box">
-        <h3>🧠 KB – Recent Facts</h3>
-        <ul id="kb-facts"></ul>
+      <div class="intro-features">
+        <div class="feat"><span class="feat-dot dot-green"></span>KB-based reasoning</div>
+        <div class="feat"><span class="feat-dot dot-amber"></span>Resolution refutation</div>
+        <div class="feat"><span class="feat-dot dot-blue"></span>CNF clause encoding</div>
+        <div class="feat"><span class="feat-dot dot-purple"></span>Real-time inference metrics</div>
       </div>
+    </div>
+  </div>
 
-      <!-- AGENT LOG -->
-      <div class="panel-box log-box">
-        <h3>🤖 Agent Log</h3>
-        <ul id="agent-log"></ul>
+  <div id="game" class="screen hidden">
+
+    <!-- NAV BAR -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="nav-skull">☠</span>
+        <span class="nav-name">WUMPUS</span>
+        <span class="nav-pill">Logic Agent</span>
       </div>
+      <div class="nav-stats">
+        <div class="ns"><div class="ns-v" id="n-infer">0</div><div class="ns-l">Inferences</div></div>
+        <div class="ns-sep"></div>
+        <div class="ns"><div class="ns-v" id="n-moves">0</div><div class="ns-l">Moves</div></div>
+        <div class="ns-sep"></div>
+        <div class="ns"><div class="ns-v" id="n-visit">0</div><div class="ns-l">Explored</div></div>
+        <div class="ns-sep"></div>
+        <div class="ns"><div class="ns-v" id="n-safe">0</div><div class="ns-l">Safe</div></div>
+      </div>
+      <div class="nav-actions">
+        <button class="nb nb-step" id="btn-step" onclick="doStep()">Step ▶</button>
+        <button class="nb nb-auto" id="btn-auto" onclick="toggleAuto()">Auto ⏩</button>
+        <button class="nb nb-reset" onclick="goReset()">↩ Reset</button>
+      </div>
+    </nav>
 
-    </aside>
-  </main>
+    <div class="game-body">
+
+      <aside class="panel panel-left">
+
+        <div class="panel-block">
+          <div class="pb-head">
+            <span class="pb-icon">📡</span>
+            <span>Active Percepts</span>
+          </div>
+          <div id="percepts" class="percept-area">
+            <span class="none-label">No percepts at (0,0)</span>
+          </div>
+        </div>
+
+        <div class="panel-block grow">
+          <div class="pb-head">
+            <span class="pb-icon">🧠</span>
+            <span>Knowledge Base</span>
+            <span class="pb-badge" id="kb-badge">0</span>
+          </div>
+          <ul class="scroll-list" id="kb-list"></ul>
+        </div>
+
+        <div class="panel-block">
+          <div class="pb-head">
+            <span class="pb-icon">⚙️</span>
+            <span>Agent Log</span>
+          </div>
+          <ul class="scroll-list short-list" id="agent-list"></ul>
+        </div>
+
+      </aside>
+
+      <main class="center-col">
+        <div class="grid-outer">
+          <div class="grid-label-top" id="col-labels"></div>
+          <div class="grid-row-wrap">
+            <div class="grid-label-left" id="row-labels"></div>
+            <div class="grid-viewport">
+              <div id="grid" class="wgrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-row">
+          <div class="leg"><div class="ls ls-agent"></div>Agent</div>
+          <div class="leg"><div class="ls ls-safe"></div>Safe</div>
+          <div class="leg"><div class="ls ls-unknown"></div>Unknown</div>
+          <div class="leg"><div class="ls ls-pit"></div>Pit</div>
+          <div class="leg"><div class="ls ls-wumpus"></div>Wumpus</div>
+          <div class="leg"><div class="ls ls-gold"></div>Gold</div>
+        </div>
+
+        <div class="speed-row">
+          <span class="speed-label">Auto speed</span>
+          <input type="range" id="speed" min="150" max="2000" value="700" step="50" oninput="setSpeed(this.value)"/>
+          <span class="speed-val" id="speed-val">700ms</span>
+        </div>
+      </main>
+
+      <aside class="panel panel-right">
+
+        <div class="panel-block">
+          <div class="pb-head"><span class="pb-icon">📊</span><span>Metrics</span></div>
+          <div class="metric-cards">
+            <div class="mc">
+              <div class="mc-num" id="m-infer">0</div>
+              <div class="mc-lbl">Resolution Steps</div>
+              <div class="mc-bar"><div class="mc-fill amber" id="mb-infer"></div></div>
+            </div>
+            <div class="mc">
+              <div class="mc-num" id="m-explore">0%</div>
+              <div class="mc-lbl">Grid Explored</div>
+              <div class="mc-bar"><div class="mc-fill green" id="mb-explore"></div></div>
+            </div>
+            <div class="mc">
+              <div class="mc-num" id="m-safe">0</div>
+              <div class="mc-lbl">Safe Cells Found</div>
+              <div class="mc-bar"><div class="mc-fill blue" id="mb-safe"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <div class="pb-head"><span class="pb-icon">🗺</span><span>Cell Guide</span></div>
+          <div class="cell-guide">
+            <div class="cg-row"><span class="cg-ic">🤖</span><div><strong>Agent</strong><br/><span>Current position</span></div></div>
+            <div class="cg-row"><span class="cg-ic">✅</span><div><strong>Safe</strong><br/><span>Proven by resolution</span></div></div>
+            <div class="cg-row"><span class="cg-ic">❓</span><div><strong>Unknown</strong><br/><span>Not yet explored</span></div></div>
+            <div class="cg-row"><span class="cg-ic">🕳️</span><div><strong>Pit</strong><br/><span>Confirmed hazard</span></div></div>
+            <div class="cg-row"><span class="cg-ic">👾</span><div><strong>Wumpus</strong><br/><span>Deadly monster</span></div></div>
+            <div class="cg-row"><span class="cg-ic">🪙</span><div><strong>Gold</strong><br/><span>The objective</span></div></div>
+          </div>
+        </div>
+
+        <div class="panel-block grow">
+          <div class="pb-head"><span class="pb-icon">🔍</span><span>CNF Clauses</span></div>
+          <ul class="scroll-list" id="cnf-list"></ul>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+
+  <div id="overlay" class="hidden">
+    <div class="ov-box" id="ov-box">
+      <div class="ov-emoji" id="ov-emoji"></div>
+      <h2 class="ov-title" id="ov-title"></h2>
+      <p class="ov-sub" id="ov-sub"></p>
+      <div class="ov-grid" id="ov-grid"></div>
+      <button class="btn-start" onclick="goReset()" style="margin-top:8px">Play Again</button>
+    </div>
+  </div>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
