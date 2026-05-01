@@ -1,7 +1,9 @@
 # AI_A6_23F-0774
 # 🤖 Dynamic Wumpus Logic Agent 
 
-## Project Overview
+
+
+##  Project Overview
 
 This is a full-stack web application implementing a **Knowledge-Based Agent (KBA)** for the classic **Wumpus World** problem from AI. The agent:
 
@@ -11,7 +13,9 @@ This is a full-stack web application implementing a **Knowledge-Based Agent (KBA
 4. Only moves to cells it can **prove safe** — never guessing
 
 
-## Features
+---
+
+##  Features
 
 | Feature | Details |
 |---|---|
@@ -26,7 +30,7 @@ This is a full-stack web application implementing a **Knowledge-Based Agent (KBA
 
 ---
 
-## Algorithm Deep-Dive
+##  Algorithm Deep-Dive
 
 ### Knowledge Base Encoding
 
@@ -81,11 +85,11 @@ AI_A6_23F-0774/
 ├── logic.py            # KB, Literal, Resolution engine, WumpusWorld
 │
 ├── templates/
-│   └── index.html      
+│   └── index.html      # Full single-page HTML
 │
 └── static/
-    ├── style.css       
-    └── script.js      
+    ├── style.css        
+    └── script.js        # Grid rendering
 ```
 
 ---
@@ -136,27 +140,29 @@ python app.py
 flask==2.3.3
 ```
 
-Deployment (Vercel)
-Step 1 — Add vercel.json
-json{
-  "builds": [
-    { "src": "app.py", "use": "@vercel/python" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "app.py" }
-  ]
-}
-Step 2 — Add requirements.txt
-flask==2.3.3
-Step 3 — Deploy
-bashnpm i -g vercel
+### Step 3 — Deploy
+
+```bash
+npm i -g vercel
 vercel login
 vercel --prod
+```
 
- API Reference
-EndpointMethodBodyDescription/GET—Serve the HTML frontend/api/new_gamePOST{rows, cols, pits}Initialize new episode/api/stepPOST—Advance agent one step/api/stateGET—Get current game state
-Example Response (/api/step)
-json{
+---
+
+## API Reference
+
+| Endpoint | Method | Body | Description |
+|---|---|---|---|
+| `/` | GET | — | Serve the HTML frontend |
+| `/api/new_game` | POST | `{rows, cols, pits}` | Initialize new episode |
+| `/api/step` | POST | — | Advance agent one step |
+| `/api/state` | GET | — | Get current game state |
+
+### Example Response (`/api/step`)
+
+```json
+{
   "agent": [1, 0],
   "visited": [[0,0], [1,0]],
   "safe_confirmed": [[0,0], [1,0]],
@@ -169,12 +175,19 @@ json{
   "log": ["Agent at (1,0) | Percepts: ['Breeze']"],
   "grid": [...]
 }
+```
 
-##  Known Limitations
+---
+
+
+
+## Known Limitations
 
 - Resolution engine uses a **complete but naive** clause-pair enumeration (exponential worst case)
 - Agent uses a **greedy safe-first** strategy — does not backtrack optimally in large grids
 - No arrow / Wumpus-kill mechanic (environment only)
+
+---
 
 
 
